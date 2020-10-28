@@ -1,0 +1,50 @@
+* {
+  margin: 0;
+}
+
+body {
+  height: 100vh;
+}
+
+.er-section-wrapper {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.er-staff-link {
+  text-decoration: none;
+  color: #000;
+}
+
+.er-staff-widget {
+  display: flex;
+  width: 50vw;
+  max-width: 500px;
+  min-width: 450px;
+  height: 100px;
+  margin: 10px 10px 0 20px;
+
+}
+
+.er-staff-picture {
+  width: 100px;
+  /* width of container */
+  height: 100%;
+  /* height of container */
+  object-fit: cover;
+  border-left: 10px solid #2141d1;
+}
+
+/* Cap text at 123 characters */
+.er-staff-text {
+  width: 100%;
+  height: auto;
+  background-color: #f9f9f9;
+  border: 1px solid #e1e1e1;
+  border-left: none;
+  padding: 10px;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  flex-direction: column;
+}
