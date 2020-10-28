@@ -1,6 +1,6 @@
 <?php
 /**
-* Plugin Name: Pirate Game Plugin
+* Plugin Name: Staff Directory Shortcode Plugin
 * Plugin URI:
 * Description: Creates a styled staff directory dynamically based off of data base
 * Version: 1.0
@@ -9,6 +9,9 @@
 **/
 
 function er_staff_directory() {
+
+  //Enqueues style sheet needed
+  wp_enqueue_style('er-staff-style', plugin_dir_url(__FILE__) . 'css/er-staff-style.css');
 
   //Creates an array of section info containing both title and id used for searches
   $sections = array(
@@ -100,7 +103,7 @@ function er_staff_directory() {
       }
     }
 
-    return $content
+    return $content;
 
 }
 
