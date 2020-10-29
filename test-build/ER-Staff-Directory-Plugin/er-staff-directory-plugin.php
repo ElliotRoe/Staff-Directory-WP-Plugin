@@ -14,63 +14,75 @@ function er_staff_directory() {
   wp_enqueue_style('er-staff-style', plugin_dir_url(__FILE__) . 'css/er-staff-style.css');
 
   //Creates an array of section info containing both title and id used for searches
+
   $sections = array(
-    array(
-      "title" => "Co-Editors",
-      "id" => "CoEditor"
-    ),
-    array(
-      "title" => "News Editors",
-      "id" => "NewsEditor"
-    ),
-    array(
-      "title" => "Opinion Editors",
-      "id" => "OpinionEditor"
-    ),
-    array(
-      "title" => "In-depth Editors",
-      "id" => "InDepthEditor"
-    ),
-    array(
-      "title" => "Feature Editors",
-      "id" => "FeatureEditor"
-    ),
-    array(
-      "title" => "Sports Editors",
-      "id" => "SportsEditor"
-    ),
-    array(
-      "title" => "Backpage Editors",
-      "id" => "BackpageEditor"
-    ),
-    array(
-      "title" => "Website Coordinator",
-      "id" => "WebsiteCoordinator"
-    ),
-    array(
-      "title" => "Graphics Editors",
-      "id" => "GraphicsEditor"
-    ),
-    array(
-      "title" => "Graphics Staff",
-      "id" => "GraphicsStaff"
-    ),
-    array(
-      "title" => "Staff Reporters",
-      "id" => "StaffReporter"
-    ));
 
-    foreach ($sections as $section) {
-      $content = '<h2 class="er-section-title">' . $section["title"] . '</h2>';
+    "Management" => array(
+      "Supervisor" => "Supervisor",
+      "CoEditor" => "Co-Editor",
+      "WebsiteCoordinator" => "Website Coordinator"
+    ),
 
-      // Searches for users in the section
+    "News" => array(
+      "NewsEditor" => "News Editor"
+    ),
+
+    "Opinion" => array(
+      "OpinionEditor" => "Opinion Editor"
+    ),
+
+    "In-depth" => array(
+      "InDepthEditor" => "In-depth Editor"
+    ),
+
+    "Feature" => array(
+      "FeatureEditor" => "Feature Editor"
+    ),
+
+    "Sports" => array(
+      "SportsEditor" => "Sports Editor"
+    ),
+
+    "Backpage" => array(
+      "BackpageEditor" => "Backpage Editor"
+    ),
+
+    "Graphics" => array(
+      "GraphicsEditor" => "Graphics Editor",
+      "AssistantGraphicsEditor" => "Assistant Graphics Editor",
+      "GraphicsStaff" => "Graphics Staff"
+    ),
+
+    "Staff Reporters" => array(
+      "StaffReporter" => "Staff Reporter"
+    ),
+  );
+
+  // Gets a defualt profile picture
+  $defualt_url = 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png';
+  // Makes sure that the global exists before calling it
+  global $simple_local_avatars;
+  $local_set = isset($simple_local_avatars);
+  if ( $local_set ) {
+    $defualt_url = $simple_local_avatars->get_default_avatar_url(100);
+  }
+
+  $content = '';
+  foreach ($sections as $section_title => $id_array) {
+    $content .= '<div class="block-header"><h3 class="er-section-title block-title">' . $section_title . '</h3></div>';
+    $content .= '<div class="er-section-wrapper">';
+
+    // Creates widget for each user containing a id specified
+    foreach ($id_array as $position_id => $position) {
+
+      // Searches for users with specific id
       $users = new WP_User_Query( array(
-          'search'         => '*'.esc_attr( $section["id"] ),
-          'search_columns' => array(
-              'user_login'
-          ),
+          'search'         => '*'.esc_attr( $position_id ),
+          'search_columns' => array('user_login'),
       ) );
       $users_found = $users->get_results();
+
+      // Creates a widget for each user found in the search
       foreach ($users_found as $user) {
         // Gets suer id for meta searches
         $id = $user->ID;
@@ -79,31 +91,43 @@ function er_staff_directory() {
         $safe_username = str_replace('.', '', get_user_meta($id, 'username', true));
         $first = get_user_meta($id, 'first_name', true);
         $last = get_user_meta($id, 'last_name', true);
+
+        /*
         $description = get_user_meta($id, 'description', true);
 
         // Processes bio make it at most 123 characters long
-        if (strlen($description)>130) {
+        if (strlen($description)>50) {
           // Cuts bio down to 123 characters
-          $description = substr($description, 0, 123);
+          $description = substr($description, 0, 50);
           // Cuts off the partial word if there is one
           $description = substr($description, 0, strrpos($description,' ')) . ' [...]';
         }
+        */
+
+        // Makes sure that the function exists before calling it
+        if ( $local_set ) {
+          $pic_url = $simple_local_avatars->get_simple_local_avatar_url($id, 100);
+          if (empty($pic_url)) {
+            $pic_url = $defualt_url;
+          }
+        }
 
         // Building html
-        $content .= '<div class="er-section-wrapper">';
         $content .= '<a class="er-staff-link" href="' . $user_url . '">';
         $content .= '<div class="er-staff-widget" id="' . $safe_username . '">';
-        $content .= '<img src="https://bexleytorch.org/wp-content/uploads/2020/10/IMG_2191.jpg" alt="https://media.istockphoto.com/vectors/default-profile-picture-avatar-photo-placeholder-vector-illustration-vector-id1223671392?k=6&m=1223671392&s=170667a&w=0&h=zP3l7WJinOFaGb2i1F4g8IS2ylw0FlIaa6x3tP9sebU=" class="er-staff-picture">';
+        $content .= '<img src="' . $pic_url . '" alt="' . $first . ' ' . $last . 'Staff Picture' . '" class="er-staff-picture">';
         $content .= '<span class="er-staff-text">';
-        $content .= '<h3 class="er-staff-name">' . $first . ' ' . $last . '</h3>';
-        $content .= '<p class="er-staff-bio">'. $description .' [...]</p>';
+        $content .= '<h5 class="er-staff-name">' . $first . '<br>' . $last . '</h5>';
+        $content .= '<p class="er-staff-position">'. $position .'</p>';
         $content .= '</span>';
         $content .= '</div>';
         $content .= '</a>';
       }
     }
+    $content .= '</div>';
+  }
 
-    return $content;
+  return $content;
 
 }
 
