@@ -59,13 +59,10 @@ function er_staff_directory() {
   );
 
   // Gets a defualt profile picture
-  $defualt_url = 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png';
+  $defualt_url = 'https://bexleytorch.org/wp-content/uploads/2020/10/Torch-Logo.png';
   // Makes sure that the global exists before calling it
   global $simple_local_avatars;
   $local_set = isset($simple_local_avatars);
-  if ( $local_set ) {
-    $defualt_url = $simple_local_avatars->get_default_avatar_url(100);
-  }
 
   $content = '';
   foreach ($sections as $section_title => $id_array) {
@@ -87,7 +84,7 @@ function er_staff_directory() {
         // Gets suer id for meta searches
         $id = $user->ID;
         // Bunch of meta searches for the info needed
-        $user_url = get_user_meta($id, 'user_url', true);
+        $user_url = get_author_posts_url($id);
         $safe_username = str_replace('.', '', get_user_meta($id, 'username', true));
         $first = get_user_meta($id, 'first_name', true);
         $last = get_user_meta($id, 'last_name', true);
@@ -117,7 +114,7 @@ function er_staff_directory() {
         $content .= '<div class="er-staff-widget" id="' . $safe_username . '">';
         $content .= '<img src="' . $pic_url . '" alt="' . $first . ' ' . $last . 'Staff Picture' . '" class="er-staff-picture">';
         $content .= '<span class="er-staff-text">';
-        $content .= '<h5 class="er-staff-name">' . $first . '<br>' . $last . '</h5>';
+        $content .= '<h5 class="er-staff-name">' . $first . ' ' . $last . '</h5>';
         $content .= '<p class="er-staff-position">'. $position .'</p>';
         $content .= '</span>';
         $content .= '</div>';
